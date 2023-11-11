@@ -1,7 +1,26 @@
 part of '../exchange_screen.dart';
 
-class SearchAndFilter extends StatelessWidget {
+class SearchAndFilter extends StatefulWidget {
   const SearchAndFilter({super.key});
+
+  @override
+  State<SearchAndFilter> createState() => _SearchAndFilterState();
+}
+
+class _SearchAndFilterState extends State<SearchAndFilter> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    _controller = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,26 +31,49 @@ class SearchAndFilter extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Expanded(
-                child: TextFormField(
-                  scrollPadding: EdgeInsets.zero,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  decoration: InputDecoration(
-                    hintText: 'Search Cryptocurrency',
-                    hintStyle: Theme.of(context).textTheme.bodySmall,
-                    filled: true,
-                    fillColor: const Color(0xff0b0b0b).withOpacity(0.05),
-                    prefixIcon: PrimaryIconButton(
-                      icon: PhosphorIcons.magnifyingGlass(),
-                      iconColor: Colors.black,
-                      iconSize: UIConstants.baseIconSize * 0.8,
-                    ),
-                    contentPadding: EdgeInsets.zero,
-                    border: const OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: UIConstants.largeBorderRadius,
-                    ),
-                  ),
-                  onChanged: (val) {},
+                child: StatefulBuilder(
+                  builder: (context, changeState) {
+                    return TextFormField(
+                      controller: _controller,
+                      scrollPadding: EdgeInsets.zero,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      decoration: InputDecoration(
+                        hintText: 'Search Cryptocurrency',
+                        hintStyle: Theme.of(context).textTheme.bodySmall,
+                        filled: true,
+                        fillColor: const Color(0xff0b0b0b).withOpacity(0.05),
+                        prefixIcon: PrimaryIconButton(
+                          icon: PhosphorIcons.magnifyingGlass(),
+                          iconColor: Colors.black,
+                          iconSize: UIConstants.baseIconSize * 0.8,
+                        ),
+                        contentPadding: EdgeInsets.zero,
+                        border: const OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                          borderRadius: UIConstants.largeBorderRadius,
+                        ),
+                        suffixIcon: _controller.text.isNotEmpty
+                            ? PrimaryIconButton(
+                                onTap: () {
+                                  onSearch(context, '');
+
+                                  _controller.clear();
+
+                                  changeState(() {});
+                                },
+                                icon: PhosphorIcons.x(),
+                                iconColor: Colors.black,
+                                iconSize: UIConstants.baseIconSize * 0.8,
+                              )
+                            : const SizedBox.shrink(),
+                      ),
+                      onChanged: (val) {
+                        onSearch(context, val);
+
+                        changeState(() {});
+                      },
+                    );
+                  },
                 ),
               ),
               horizontalSpaceRegular,
@@ -98,6 +140,12 @@ class SearchAndFilter extends StatelessWidget {
         )
       ],
     );
+  }
+
+  void onSearch(BuildContext context, String val) {
+    context.read<ExchangeBloc>().add(
+          LocalSearchCoin(val: val),
+        );
   }
 
   void onFilterTap(BuildContext context) {

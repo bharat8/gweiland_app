@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:gweiland_app/features/exchange/repository/exchange_repository.dart';
 import 'package:gweiland_app/utils/application/core/enums.dart';
+import 'package:gweiland_app/utils/application/core/event_transformers/debounce_restartable.dart';
 import 'package:gweiland_app/utils/application/core/event_transformers/throttle_droppable.dart';
 import 'package:gweiland_app/utils/application/core/status/status.dart';
 import 'package:gweiland_app/utils/domain/models/coin/coin.dart';
@@ -19,6 +20,10 @@ class ExchangeBloc extends Bloc<ExchangeEvent, ExchangeState> {
       transformer: throttleDroppable(),
     );
     on<SetFilters>(_onSetFilters);
+    on<LocalSearchCoin>(
+      _onLocalSearchCoin,
+      transformer: debounceRestartable(),
+    );
   }
 
   final IExchangeRepository _repository;
@@ -70,5 +75,25 @@ class ExchangeBloc extends Bloc<ExchangeEvent, ExchangeState> {
     );
 
     add(FetchLatestCoins());
+  }
+
+  void _onLocalSearchCoin(
+    LocalSearchCoin event,
+    Emitter<ExchangeState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        searchedText: event.val,
+        searchedList: event.val.isNotEmpty
+            ? List.of(state.latestCoins)
+                .where(
+                  (e) =>
+                      e.name.toLowerCase().contains(event.val.toLowerCase()) ||
+                      e.symbol.toLowerCase().contains(event.val.toLowerCase()),
+                )
+                .toList()
+            : [],
+      ),
+    );
   }
 }

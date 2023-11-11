@@ -7,6 +7,8 @@ class ExchangeState extends Equatable {
     this.type = CoinType.Cryptocurrency,
     this.latestCoins = const [],
     this.latestCoinsStatus = const Status.initial(),
+    this.searchedText = '',
+    this.searchedList = const [],
     this.sortType = SortType.market_cap,
     this.sortBy = SortBy.desc,
   });
@@ -15,6 +17,9 @@ class ExchangeState extends Equatable {
   final List<Coin> latestCoins;
   final Status latestCoinsStatus;
 
+  final String searchedText;
+  final List<Coin> searchedList;
+
   final SortType sortType;
   final SortBy sortBy;
 
@@ -22,6 +27,8 @@ class ExchangeState extends Equatable {
     CoinType? type,
     List<Coin>? latestCoins,
     Status? latestCoinsStatus,
+    String? searchedText,
+    List<Coin>? searchedList,
     SortType? sortType,
     SortBy? sortBy,
   }) {
@@ -29,6 +36,8 @@ class ExchangeState extends Equatable {
       type: type ?? this.type,
       latestCoins: latestCoins ?? this.latestCoins,
       latestCoinsStatus: latestCoinsStatus ?? this.latestCoinsStatus,
+      searchedText: searchedText ?? this.searchedText,
+      searchedList: searchedList ?? this.searchedList,
       sortType: sortType ?? this.sortType,
       sortBy: sortBy ?? this.sortBy,
     );
@@ -40,6 +49,8 @@ class ExchangeState extends Equatable {
       type,
       latestCoins,
       latestCoinsStatus,
+      searchedText,
+      searchedList,
       sortType,
       sortBy,
     ];
@@ -47,6 +58,6 @@ class ExchangeState extends Equatable {
 
   @override
   String toString() {
-    return 'ExchangeState(type: $type, latestCoins: $latestCoins, latestCoinsStatus: $latestCoinsStatus, sortType: $sortType, sortBy: $sortBy)';
+    return 'ExchangeState(type: $type, latestCoins: $latestCoins, latestCoinsStatus: $latestCoinsStatus, searchedText: $searchedText, searchedList: $searchedList, sortType: $sortType, sortBy: $sortBy)';
   }
 }

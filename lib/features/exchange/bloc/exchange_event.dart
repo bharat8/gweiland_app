@@ -30,3 +30,14 @@ class SetFilters extends ExchangeEvent {
   @override
   List<Object?> get props => [sortType];
 }
+
+class LocalSearchCoin extends ExchangeEvent {
+  const LocalSearchCoin({
+    required this.val,
+  });
+
+  final String val;
+
+  @override
+  List<Object?> get props => [val];
+}

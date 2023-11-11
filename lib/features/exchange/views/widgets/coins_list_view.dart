@@ -72,14 +72,18 @@ class _Success extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: state.latestCoins.length,
+      itemCount: state.searchedText.isNotEmpty
+          ? state.searchedList.length
+          : state.latestCoins.length,
       itemBuilder: (context, index) {
-        if (index == 0) {
+        final coin = state.searchedText.isNotEmpty
+            ? state.searchedList[index]
+            : state.latestCoins[index];
+
+        if (state.searchedText.isEmpty && index == 0) {
           return Column(
             children: [
-              TopCoinItem(
-                coin: state.latestCoins[index],
-              ),
+              TopCoinItem(coin: coin),
               verticalSpaceRegular,
               Row(
                 children: [
@@ -106,9 +110,7 @@ class _Success extends StatelessWidget {
           padding: const EdgeInsets.only(
             bottom: UIConstants.baseMargin * 3,
           ),
-          child: CoinItem(
-            coin: state.latestCoins[index],
-          ),
+          child: CoinItem(coin: coin),
         );
       },
     );
